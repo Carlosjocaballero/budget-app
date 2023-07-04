@@ -4,10 +4,48 @@
 #include "SQLUtils.cpp"
 #include "BudgetApp.cpp"
 
+bool validateDate(std::string date){
+    if(date.size() == 0) return false;
+    // Get the different parts of the date
+    std::vector<std::string> dateDetails;
+    int begin{0};
+    for(int i = 0; i < date.size(); i++){
+        if(date[i] == '-'){
+            // Push back year, month and date
+            dateDetails.push_back(date.substr(begin, i - begin));
+            begin = i + 1;
+        }
+        if(i == date.size() - 1){
+            // Push back the last part (the day)
+            dateDetails.push_back(date.substr(begin));
+        }
+    }
+
+    int year = std::stoi(dateDetails[0]);
+    int month = std::stoi(dateDetails[1]);
+    int day = std::stoi(dateDetails[2]);
+    bool valid = false;
+
+    if(year < 1900 || year > 9999){ 
+        std::cout << "Year is not valid!" << std::endl;
+        return false; 
+    }
+    if(month < 0 || month > 12){ 
+        std::cout << "Month is not valid!" << std::endl;
+        return false; 
+    }
+    if(day < 0 || day > 31) { 
+        std::cout << "Day is not valid!" << std::endl;
+        return false; 
+    }
+    return true;
+}
+
 void newEntry(BudgetApp &app) {
     std::string date = "";
     std::cout << "\nWhen is the entry for?" << std::endl;
-    bool loop = true;
+    bool loop{true}, dateBool{true};
+
     while(loop){
         std::cout << "1.Today\t2.Custom Date" << std::endl;
         int usr_choice;
@@ -17,8 +55,15 @@ void newEntry(BudgetApp &app) {
                 loop = false;
                 break;
             case 2:
-                std::cout << "Please write the date (year/month/day): ";
-                std::cin >> date;
+                while(dateBool){
+                    std::cout << "Please write the date (year-month-day): ";
+                    std::cin >> date;
+                    if(validateDate(date)){
+                        dateBool = false;
+                        break;
+                    }
+                    std::cout << date << " is not a valid date.\n" << std::endl;
+                }
                 loop = false;
                 break;
             default:
@@ -26,12 +71,7 @@ void newEntry(BudgetApp &app) {
                 break;
         }
     }
-    if(date == ""){
-        std::cout << "no date was chosen" << std::endl;
-    }
-    else{
-        std::cout << "Date: " << date << std::endl;
-    }
+    std::cout << "Date is: " << date << std::endl;   
 }
 
 void editEntry(BudgetApp &app) {
