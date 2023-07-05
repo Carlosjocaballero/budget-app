@@ -56,7 +56,7 @@ std::string getValidDate(){
                 break;
             case 2:
                 while(dateBool){
-                    std::cout << "Please write the date (year-month-day): ";
+                    std::cout << "\nPlease write the date (year-month-day): ";
                     std::cin >> date;
                     if(validateDate(date)){
                         dateBool = false;
@@ -74,9 +74,20 @@ std::string getValidDate(){
     return date;
 }
 
+int getTotalPay(){
+    std::cout << "\nWhat is the total pay amount? ";
+    int total;
+    std::cin >> total;
+    return total;
+}
+
 void newEntry(BudgetApp &app) {
     std::string date = getValidDate();
-    std::cout << "Date: " << date << std::endl;
+    int totalPay = getTotalPay();
+
+
+    std::cout << "\nDate: " << date << std::endl;
+    std::cout << "Total Pay: " << totalPay << std::endl;
 }
 
 void editEntry(BudgetApp &app) {
@@ -118,7 +129,7 @@ int main(void)
                 break;
             case 3:
                 viewHistory(app);
-                std::cout << "\nIs that all? (Y/N) ";
+                std::cout << "\n\nIs that all? (Y/N) ";
                 std::cin >> leave;
                 if(leave == "Y"){
                     exit = true;
