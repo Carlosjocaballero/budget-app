@@ -41,7 +41,7 @@ bool validateDate(std::string date){
     return true;
 }
 
-void newEntry(BudgetApp &app) {
+std::string getValidDate(){
     std::string date = "";
     std::cout << "\nWhen is the entry for?" << std::endl;
     bool loop{true}, dateBool{true};
@@ -71,7 +71,12 @@ void newEntry(BudgetApp &app) {
                 break;
         }
     }
-    std::cout << "Date is: " << date << std::endl;   
+    return date;
+}
+
+void newEntry(BudgetApp &app) {
+    std::string date = getValidDate();
+    std::cout << "Date: " << date << std::endl;
 }
 
 void editEntry(BudgetApp &app) {
