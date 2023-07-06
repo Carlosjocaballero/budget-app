@@ -81,13 +81,50 @@ int getTotalPay(){
     return total;
 }
 
+std::string getIncomeType(){
+    bool loop = true;
+    std::string incomeType;
+    std::string custom_choice;
+    while(loop){
+        // Get user choice
+        std::cout << "\nWhat kind of income amount would you want to make?"<< std::endl;
+        std::cout << "1.Semi-weekly\t2.Monthly\t3.Custom" << std::endl;
+        int usr_choice;
+        std::cin >> usr_choice;
+
+        // Execute choice
+        switch(usr_choice){
+            case 1:
+                incomeType = "semi-weekly";
+                loop = false;
+                break;
+            case 2:
+                incomeType = "monthly";
+                loop = false;
+                break;
+            case 3:
+                std::cout << "\n What custom name would you want to apply to this income: ";
+                std::cin >> custom_choice;
+                incomeType = custom_choice;
+                loop = false;
+                break;
+            default:
+                std::cout << usr_choice << " is not an option, please choose again.\n" << std::endl;
+                break;
+        }
+    }
+    return incomeType;
+}
+
 void newEntry(BudgetApp &app) {
     std::string date = getValidDate();
     int totalPay = getTotalPay();
-
+    std::string incomeType = getIncomeType();
+    
 
     std::cout << "\nDate: " << date << std::endl;
     std::cout << "Total Pay: " << totalPay << std::endl;
+    std::cout << "Income type: " << incomeType << std::endl;
 }
 
 void editEntry(BudgetApp &app) {
