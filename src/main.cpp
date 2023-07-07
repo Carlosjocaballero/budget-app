@@ -1,4 +1,4 @@
-// Command to run g++ main.cpp -lmysqlcppconn -lmysqlcppconn-static
+// Command to run sudo 
 
 #include "../include/pch.h"
 #include "SQLUtils.cpp"
@@ -74,9 +74,9 @@ std::string getValidDate(){
     return date;
 }
 
-int getTotalPay(){
+float getTotalPay(){
     std::cout << "\nWhat is the total pay amount? ";
-    int total;
+    float total;
     std::cin >> total;
     return total;
 }
@@ -116,11 +116,60 @@ std::string getIncomeType(){
     return incomeType;
 }
 
+float usePercentage(float percentage, float remainingTotal){
+    return 0.0;
+}
+
+void calculator(){
+
+}
+
 void newEntry(BudgetApp &app) {
     std::string date = getValidDate();
-    int totalPay = getTotalPay();
+    float totalPay = getTotalPay();
     std::string incomeType = getIncomeType();
     
+    std::vector<std::string> transactions = {"home", "expenses", "spending", "savings"};
+    int usr_choice, conversionType;
+    float remainingTotal = totalPay;
+    // Key: transaction type | value: Transaction amount
+    std::unordered_map<std::string, float> budget;
+    float amountChosen, amountCalculated;
+
+    std::cout << std::endl;
+    while(budget.size() != 4){
+        std::cout << "Which one would you want to budget? " << std::endl;
+        for(int i = 0; i < transactions.size(); i++){
+            std::cout << i+1 << "." << transactions[i] << "   ";
+        }
+        std::cout << std::endl;
+        std::cin >> usr_choice;
+
+        std::cout << std::endl <<  transactions[usr_choice - 1] << ": Would you want to budget in percentage or money amount? " << std::endl;
+        std::cout << "1.Percentage    2.Money Amount    3. Calculator" << std::endl;
+        std::cin >> conversionType;
+
+        switch(conversionType){
+            case 1:
+                std::cout << "\nHow much percentage? " << std::endl;
+                std::cin >> amountChosen;
+                amountCalculated = usePercentage(amountChosen, remainingTotal);
+                budget[transactions[usr_choice - 1]] = amountCalculated;
+                break;
+            case 2:
+                std::cout << "\nHow much money amount? " << std::endl;
+                std::cin >> amountChosen;
+                budget[transactions[usr_choice - 1]] = amountChosen;
+                break;
+            case 3:
+                calculator();
+                break;
+            default:
+                std::cout << "Choice not avaliable. Please choose again. \n" << std::endl;
+                break;
+        }
+
+    }
 
     std::cout << "\nDate: " << date << std::endl;
     std::cout << "Total Pay: " << totalPay << std::endl;
