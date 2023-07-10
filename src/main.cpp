@@ -116,9 +116,8 @@ std::string getIncomeType(){
     return incomeType;
 }
 
-float usePercentage(float percentage, float remainingTotal){
-    
-    return 0.0;
+float usePercentage(float percentage, float total){
+    return (percentage / 100) * total;
 }
 
 void calculator(){
@@ -200,7 +199,7 @@ void newEntry(BudgetApp &app) {
             case 1:
                 std::cout << "\nHow much percentage? " << std::endl;
                 std::cin >> amountChosen;
-                amountCalculated = usePercentage(amountChosen, remainingTotal);
+                amountCalculated = usePercentage(amountChosen, totalPay);
                 budget[transactions[usr_choice - 1]] = amountCalculated;
                 transactions.erase(std::remove(transactions.begin(), transactions.end(), transactions[usr_choice - 1]), transactions.end());
                 usr_choice = 0;
@@ -209,6 +208,7 @@ void newEntry(BudgetApp &app) {
                 std::cout << "\nHow much money amount? " << std::endl;
                 std::cin >> amountChosen;
                 budget[transactions[usr_choice - 1]] = amountChosen;
+                usr_choice = 0;
                 break;
             case 3:
                 calculator();
@@ -223,8 +223,10 @@ void newEntry(BudgetApp &app) {
     std::cout << "\nDate: " << date << std::endl;
     std::cout << "Total Pay: " << totalPay << std::endl;
     std::cout << "Income type: " << incomeType << std::endl;
+
     for(auto type : budget){
-        std::cout << type.first <<": " << type.second << std::endl;
+        float percentage = (type.second * 100) / totalPay;
+        std::cout << type.first <<": " << type.second << "(" << percentage << "%)" << std::endl;
     }
 }
 
