@@ -47,7 +47,7 @@ std::string getValidDate(){
     bool loop{true}, dateBool{true};
 
     while(loop){
-        std::cout << "1.Today\t2.Custom Date" << std::endl;
+        std::cout << "1.Today    2.Custom Date" << std::endl;
         int usr_choice;
         std::cin >> usr_choice;
         switch(usr_choice){
@@ -88,7 +88,7 @@ std::string getIncomeType(){
     while(loop){
         // Get user choice
         std::cout << "\nWhat kind of income amount would you want to make?"<< std::endl;
-        std::cout << "1.Semi-weekly\t2.Monthly\t3.Custom" << std::endl;
+        std::cout << "1.Semi-weekly    2.Monthly    3.Custom" << std::endl;
         int usr_choice;
         std::cin >> usr_choice;
 
@@ -117,11 +117,55 @@ std::string getIncomeType(){
 }
 
 float usePercentage(float percentage, float remainingTotal){
+    
     return 0.0;
 }
 
 void calculator(){
+    std::cout << "\n----- PERCENTAGE CALCULATOR -----" << std::endl;
+    bool exit = false;
+    int usr_choice;
+    float a,b;
+    while(!exit){
+        std::cout << "\nPlease choose one of the following: \n" << std::endl;
+        std::cout << "1. What is (a)_____% of (b)_____\t2. (a)_____ is what percentage of (b)_____\t3. Exit"<< std::endl;
+        std::cin >> usr_choice;
 
+        switch(usr_choice){
+            case 1: {
+                std::cout << "\na: ";
+                std::cin >> a;
+                std::cout << "b: ";
+                std::cin >> b;
+                if(a > 100){
+                    std::cout << "Percentage cannot be bigger than 100" << std::endl;
+                    break;
+                }
+                float calculation = b * (a / 100);
+                std::cout << std::endl << calculation << " is " << a << "% of " << b << std::endl;
+            } break;
+            case 2: {
+                std::cout << "\na: ";
+                std::cin >> a;
+                std::cout << "b: ";
+                std::cin >> b;
+                if(a > b){
+                    std::cout << "a cannot be bigger than b" << std::endl;
+                    break;
+                }
+                float percentage = (a * 100) / b;
+                std::cout << std::endl << a << " is " << percentage << "% of " << b << std::endl; 
+            } break;
+            case 3:
+                exit = true;
+                break;
+            default:
+                std::cout << usr_choice << " is not an option, please choose again.\n" << std::endl;
+                break;
+        }
+
+
+    }   
 }
 
 void newEntry(BudgetApp &app) {
@@ -130,7 +174,7 @@ void newEntry(BudgetApp &app) {
     std::string incomeType = getIncomeType();
     
     std::vector<std::string> transactions = {"home", "expenses", "spending", "savings"};
-    int usr_choice, conversionType;
+    int usr_choice{0}, conversionType;
     float remainingTotal = totalPay;
     // Key: transaction type | value: Transaction amount
     std::unordered_map<std::string, float> budget;
@@ -138,15 +182,18 @@ void newEntry(BudgetApp &app) {
 
     std::cout << std::endl;
     while(budget.size() != 4){
-        std::cout << "Which one would you want to budget? " << std::endl;
-        for(int i = 0; i < transactions.size(); i++){
-            std::cout << i+1 << "." << transactions[i] << "   ";
+        if(usr_choice == 0){
+            std::cout << "Which one would you want to budget? " << std::endl;
+            for(int i = 0; i < transactions.size(); i++){
+                std::cout << i+1 << "." << transactions[i] << "   ";
+            }
+            std::cout << std::endl;
+            std::cin >> usr_choice;
         }
-        std::cout << std::endl;
-        std::cin >> usr_choice;
 
+        
         std::cout << std::endl <<  transactions[usr_choice - 1] << ": Would you want to budget in percentage or money amount? " << std::endl;
-        std::cout << "1.Percentage    2.Money Amount    3. Calculator" << std::endl;
+        std::cout << "1.Percentage    2.Money Amount    3. Percentage Calculator" << std::endl;
         std::cin >> conversionType;
 
         switch(conversionType){
@@ -155,6 +202,8 @@ void newEntry(BudgetApp &app) {
                 std::cin >> amountChosen;
                 amountCalculated = usePercentage(amountChosen, remainingTotal);
                 budget[transactions[usr_choice - 1]] = amountCalculated;
+                transactions.erase(std::remove(transactions.begin(), transactions.end(), transactions[usr_choice - 1]), transactions.end());
+                usr_choice = 0;
                 break;
             case 2:
                 std::cout << "\nHow much money amount? " << std::endl;
@@ -174,6 +223,9 @@ void newEntry(BudgetApp &app) {
     std::cout << "\nDate: " << date << std::endl;
     std::cout << "Total Pay: " << totalPay << std::endl;
     std::cout << "Income type: " << incomeType << std::endl;
+    for(auto type : budget){
+        std::cout << type.first <<": " << type.second << std::endl;
+    }
 }
 
 void editEntry(BudgetApp &app) {
@@ -191,7 +243,7 @@ int main(void)
     std::cout << "What would you like to do today?\n" << std::endl;
     bool exit = false; std::string leave;
     while(!exit){
-        std::cout << "1.New Entry\t2.Edit Entry\t3.View History\t4.Exit" << std::endl;
+        std::cout << "1.New Entry    2.Edit Entry    3.View History    4.Exit" << std::endl;
         int usr_choice;
         std::cin >> usr_choice;
         switch(usr_choice){
