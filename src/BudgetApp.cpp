@@ -52,7 +52,6 @@ void BudgetApp::insert(std::string date_recorded, std::string income_type, float
     stmt = con->createStatement();
     std::string query = "INSERT INTO incomehistory (date_recorded, income_type, total_income, home, home_percentage, expenses, expenses_percentage, spending, spending_percentage, savings, savings_percentage) VALUE ('" + date_recorded + "', '" + income_type + "', " + std::to_string(total_income) + ", " + std::to_string(home) + ", " + std::to_string(home_percentage) + ", " + std::to_string(expenses) + ", " + std::to_string(expenses_percentage) + ", " + std::to_string(spending) + ", " + std::to_string(spending_percentage) + ", " + std::to_string(savings) + ", " + std::to_string(savings_percentage) + ")";
 
-    std::cout << query << std::endl << std::endl;
 
     stmt->execute(query);
 }
