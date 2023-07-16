@@ -42,7 +42,7 @@ bool validateDate(std::string date){
 }
 
 std::string getValidDate(){
-    std::string date = "";
+    std::string date_recorded = "";
     std::cout << "\nWhen is the entry for?" << std::endl;
     bool loop{true}, dateBool{true};
 
@@ -55,20 +55,20 @@ std::string getValidDate(){
                 std::time_t now = std::time(nullptr);
                 char dateBuffer[11];
 
-                std::strftime(dateBuffer, sizeof(dateBuffer), "%Y-%-m-%-d", std::localtime(&now));
+                std::strftime(dateBuffer, sizeof(dateBuffer), "%Y-%m-%d", std::localtime(&now));
                 std::string currentDate(dateBuffer);
-                date = currentDate;
+                date_recorded = currentDate;
                 loop = false;
             }break;
             case 2:
                 while(dateBool){
                     std::cout << "\nPlease write the date (year-month-day): ";
-                    std::cin >> date;
-                    if(validateDate(date)){
+                    std::cin >> date_recorded;
+                    if(validateDate(date_recorded)){
                         dateBool = false;
                         break;
                     }
-                    std::cout << date << " is not a valid date.\n" << std::endl;
+                    std::cout << date_recorded << " is not a valid date.\n" << std::endl;
                 }
                 loop = false;
                 break;
@@ -77,7 +77,7 @@ std::string getValidDate(){
                 break;
         }
     }
-    return date;
+    return date_recorded;
 }
 
 float getTotalPay(){
@@ -94,14 +94,14 @@ std::string getIncomeType(){
     while(loop){
         // Get user choice
         std::cout << "\nWhat kind of income amount would you want to make?"<< std::endl;
-        std::cout << "1.Semi-weekly    2.Monthly    3.Custom" << std::endl;
+        std::cout << "1.Bi-weekly    2.Monthly    3.Custom" << std::endl;
         int usr_choice;
         std::cin >> usr_choice;
 
         // Execute choice
         switch(usr_choice){
             case 1:
-                income_type = "semi-weekly";
+                income_type = "bi-weekly";
                 loop = false;
                 break;
             case 2:
@@ -174,66 +174,98 @@ void calculator(){
 }
 
 void newEntry(BudgetApp &app) {
-    std::string date = getValidDate();
-    float total_income = getTotalPay();
-    std::string income_type = getIncomeType();
-    
-    std::vector<std::string> transactions = {"home", "expenses", "spending", "savings"};
-    int usr_choice{0}, conversionType;
-    float remainingTotal{total_income}, remainingPercentage{100};
-    // Key: transaction type | value: Transaction amount
-    std::unordered_map<std::string, float> budget;
-    float amountChosen, amountCalculated;
-
-    std::cout << std::endl;
-    while(budget.size() != 4){
-        if(usr_choice == 0){
-            std::cout << "\nWhich one would you want to budget? " << std::endl;
-            for(int i = 0; i < transactions.size(); i++){
-                std::cout << i+1 << "." << transactions[i] << "   ";
-            }
-            std::cout << std::endl;
-            std::cin >> usr_choice;
-        }
-
+    bool correct = false;
+    while (!correct){
+        std::string date_recorded = getValidDate();
+        float total_income = getTotalPay();
+        std::string income_type = getIncomeType();
         
-        std::cout << std::endl << "[" << transactions[usr_choice - 1] << "] Would you want to budget in percentage or money amount? " << std::endl;
-        std::cout << "1.Percentage    2.Money Amount    3. Percentage Calculator" << std::endl;
-        std::cin >> conversionType;
+        std::vector<std::string> transactions = {"home", "expenses", "spending", "savings"};
+        int usr_choice{0}, conversionType;
+        float remainingTotal{total_income}, remainingPercentage{100};
+        // Key: transaction type | value: Transaction amount
+        std::unordered_map<std::string, float> budget;
+        float amountChosen, amountCalculated;
 
-        switch(conversionType){
-            case 1:
-                std::cout << "\nHow much percentage? " << std::endl;
-                std::cin >> amountChosen;
-                amountCalculated = usePercentage(amountChosen, total_income);
-                budget[transactions[usr_choice - 1]] = amountCalculated;
-                transactions.erase(std::remove(transactions.begin(), transactions.end(), transactions[usr_choice - 1]), transactions.end());
-                usr_choice = 0;
-                break;
-            case 2:
-                std::cout << "\nHow much money amount? " << std::endl;
-                std::cin >> amountChosen;
-                budget[transactions[usr_choice - 1]] = amountChosen;
-                usr_choice = 0;
-                break;
-            case 3:
-                calculator();
-                break;
-            default:
-                std::cout << "Choice not avaliable. Please choose again. \n" << std::endl;
-                break;
+        std::cout << std::endl;
+        while(budget.size() != 4){
+            if(usr_choice == 0){
+                std::cout << "\nWhich one would you want to budget? " << std::endl;
+                for(int i = 0; i < transactions.size(); i++){
+                    std::cout << i+1 << "." << transactions[i] << "   ";
+                }
+                std::cout << std::endl;
+                std::cin >> usr_choice;
+            }
+
+            
+            std::cout << std::endl << "[" << transactions[usr_choice - 1] << "] Would you want to budget in percentage or money amount? " << std::endl;
+            std::cout << "1.Percentage    2.Money Amount    3. Percentage Calculator" << std::endl;
+            std::cin >> conversionType;
+
+            switch(conversionType){
+                case 1:
+                    std::cout << "\nHow much percentage? " << std::endl;
+                    std::cin >> amountChosen;
+                    amountCalculated = usePercentage(amountChosen, total_income);
+                    budget[transactions[usr_choice - 1]] = amountCalculated;
+                    transactions.erase(std::remove(transactions.begin(), transactions.end(), transactions[usr_choice - 1]), transactions.end());
+                    usr_choice = 0;
+                    break;
+                case 2:
+                    std::cout << "\nHow much money amount? " << std::endl;
+                    std::cin >> amountChosen;
+                    budget[transactions[usr_choice - 1]] = amountChosen;
+                    usr_choice = 0;
+                    break;
+                case 3:
+                    calculator();
+                    break;
+                default:
+                    std::cout << "Choice not avaliable. Please choose again. \n" << std::endl;
+                    break;
+            }
+
+        }
+        std::cout << "--- SUMMARY ---" << std::endl;
+        std::cout << "\nDate: " << date_recorded << std::endl;
+        std::cout << "Total Pay: " << total_income << std::endl;
+        std::cout << "Income type: " << income_type << std::endl;
+
+        float home, home_percentage, expenses, expenses_percentage, spending, spending_percentage, savings, savings_percentage;
+        for(auto type : budget){
+            float percentage = (type.second * 100) / total_income;
+            std::cout << type.first <<": " << type.second << "(" << percentage << "%)" << std::endl;
+            if(type.first  == "home"){
+                home = type.second;
+                home_percentage = percentage;
+            }
+            if(type.first == "expenses"){
+                expenses = type.second;
+                expenses_percentage = percentage;
+            }
+            if(type.first == "spending"){
+                spending = type.second;
+                spending_percentage = percentage;
+            }
+            if(type.first == "savings"){
+                savings = type.second;
+                savings_percentage = percentage;
+            }
         }
 
+        char corr;
+        std::cout << "\nIs this all correct? (Y/N) ";
+        std::cin >> corr;
+        if(corr == 'N'){
+            std::cout << "\n\n---LET'S TRY AGAIN---\n" << std::endl;
+            continue;
+        }
+        app.insert(date_recorded, income_type, total_income, home, home_percentage, expenses, expenses_percentage, spending, spending_percentage, savings, savings_percentage);
+        correct = true;
     }
+    
 
-    std::cout << "\nDate: " << date << std::endl;
-    std::cout << "Total Pay: " << total_income << std::endl;
-    std::cout << "Income type: " << income_type << std::endl;
-
-    for(auto type : budget){
-        float percentage = (type.second * 100) / total_income;
-        std::cout << type.first <<": " << type.second << "(" << percentage << "%)" << std::endl;
-    }
 }
 
 void editEntry(BudgetApp &app) {
