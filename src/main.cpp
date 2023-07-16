@@ -51,9 +51,15 @@ std::string getValidDate(){
         int usr_choice;
         std::cin >> usr_choice;
         switch(usr_choice){
-            case 1:
+            case 1: {
+                std::time_t now = std::time(nullptr);
+                char dateBuffer[11];
+
+                std::strftime(dateBuffer, sizeof(dateBuffer), "%Y-%-m-%-d", std::localtime(&now));
+                std::string currentDate(dateBuffer);
+                date = currentDate;
                 loop = false;
-                break;
+            }break;
             case 2:
                 while(dateBool){
                     std::cout << "\nPlease write the date (year-month-day): ";
@@ -174,7 +180,7 @@ void newEntry(BudgetApp &app) {
     
     std::vector<std::string> transactions = {"home", "expenses", "spending", "savings"};
     int usr_choice{0}, conversionType;
-    float remainingTotal = totalPay;
+    float remainingTotal{totalPay}, remainingPercentage{100};
     // Key: transaction type | value: Transaction amount
     std::unordered_map<std::string, float> budget;
     float amountChosen, amountCalculated;
@@ -191,7 +197,7 @@ void newEntry(BudgetApp &app) {
         }
 
         
-        std::cout << std::endl <<  transactions[usr_choice - 1] << ": Would you want to budget in percentage or money amount? " << std::endl;
+        std::cout << std::endl << "[" << transactions[usr_choice - 1] << "] Would you want to budget in percentage or money amount? " << std::endl;
         std::cout << "1.Percentage    2.Money Amount    3. Percentage Calculator" << std::endl;
         std::cin >> conversionType;
 
